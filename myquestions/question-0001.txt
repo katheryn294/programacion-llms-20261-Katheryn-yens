@@ -1,6 +1,6 @@
 Problema: Selección de productos según condiciones
 
-Escribe una función llamada seleccionar_productos(df).
+Escribe una función llamada seleccionar_productos(df). (ESE DEBE SER EL NOMBRE EXACTO DE LA FUNCION, YA QUE EL GENERADOR DEPENDE DE ESE NOMBRE)
 
 La función recibe un DataFrame de pandas con índice itemid y con las siguientes columnas:
 - price
