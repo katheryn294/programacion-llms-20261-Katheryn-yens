@@ -1,0 +1,35 @@
+Problema: Entrenamiento y evaluación de un clasificador KNN
+
+Escribe una función llamada entrenar_y_evaluar_knn(X, y, train_pct, n_neighbors).
+
+La función recibe:
+- X: un numpy array con las características
+- y: un numpy array con las etiquetas
+- train_pct: un valor entre 0 y 1 que indica el porcentaje de datos para entrenamiento
+- n_neighbors: número de vecinos para el modelo KNeighborsClassifier
+
+La función debe:
+
+1. Dividir X e y en conjunto de entrenamiento y conjunto de prueba usando train_test_split de sklearn.
+2. Usar random_state=42 en la partición.
+3. Entrenar un modelo KNeighborsClassifier con n_neighbors=n_neighbors.
+4. Predecir las etiquetas del conjunto de prueba.
+5. Calcular la exactitud del modelo sobre el conjunto de prueba.
+6. Retornar un diccionario con las siguientes claves:
+   - "Xts"
+   - "yts"
+   - "preds"
+   - "accuracy"
+
+Entrada:
+- X: numpy array
+- y: numpy array
+- train_pct: float
+- n_neighbors: int
+
+Salida:
+- diccionario con Xts, yts, preds y accuracy
+
+Restricciones:
+- Usar numpy y sklearn
+- La partición debe hacerse con train_size=train_pct y random_state=42
