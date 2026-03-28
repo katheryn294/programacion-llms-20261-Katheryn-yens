@@ -1,0 +1,25 @@
+Problema: Selección de productos según condiciones
+
+Escribe una función llamada seleccionar_productos(df).
+
+La función recibe un DataFrame de pandas con índice itemid y con las siguientes columnas:
+- price
+- category
+- opcionalmente margin
+
+La función debe retornar una lista con los itemid de las filas que cumplan alguna de estas condiciones:
+
+- price > 100
+- o, si existe la columna margin, margin > 12
+
+La lista debe conservar el orden en que aparecen en el DataFrame.
+
+Entrada:
+- df: pandas DataFrame
+
+Salida:
+- lista de enteros con los itemid que cumplen las condiciones
+
+Restricciones:
+- Usar pandas
+- No usar ciclos for
