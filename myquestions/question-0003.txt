@@ -1,0 +1,24 @@
+Problema: Preparación de matriz con imputación de datos faltantes
+
+Escribe una función llamada preparar_matriz_con_imputacion(df, target_col).
+
+La función recibe un DataFrame de pandas que contiene varias columnas numéricas y una columna objetivo indicada por target_col.
+
+La función debe:
+
+1. Separar las características en X y la variable objetivo en y.
+2. Reemplazar los valores faltantes de X usando SimpleImputer de sklearn con strategy="mean".
+3. Retornar una tupla con:
+   - X_imputed: un numpy array con los datos imputados
+   - y: un numpy array con la variable objetivo
+
+Entrada:
+- df: pandas DataFrame
+- target_col: string con el nombre de la columna objetivo
+
+Salida:
+- una tupla (X_imputed, y)
+
+Restricciones:
+- Usar pandas, numpy y sklearn
+- La imputación debe hacerse solo sobre X
