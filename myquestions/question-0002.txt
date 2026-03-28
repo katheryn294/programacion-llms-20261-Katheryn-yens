@@ -1,0 +1,26 @@
+Problema: Resumen de ventas por categoría
+
+Escribe una función llamada resumen_ventas_por_categoria(df).
+
+La función recibe un DataFrame de pandas con las siguientes columnas:
+- producto
+- categoria
+- ventas
+
+La función debe retornar un nuevo DataFrame con una fila por cada categoria y con las columnas:
+- categoria
+- promedio_ventas
+- max_ventas
+- min_ventas
+
+El resultado debe quedar ordenado por categoria de forma ascendente y con el índice reiniciado.
+
+Entrada:
+- df: pandas DataFrame
+
+Salida:
+- pandas DataFrame con las columnas categoria, promedio_ventas, max_ventas y min_ventas
+
+Restricciones:
+- Usar pandas
+- No usar ciclos for
