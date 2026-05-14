@@ -5,7 +5,6 @@ from sklearn.feature_selection import VarianceThreshold
 
 
 # FUNCIÓN PRINCIPAL
-
 def detectar_columnas_baja_cardinalidad(df, umbral):
     """
     Detecta columnas con baja cardinalidad y
