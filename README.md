@@ -4,4 +4,4 @@ Nombre: Katheryn Yens Martinez Perez
 
 
 
-Correo institucional: kathery.martinez@udea.edu.co
+Correo institucional: katheryn.martinez@udea.edu.co
