@@ -1,299 +1,238 @@
-{
-  "nbformat": 4,
-  "nbformat_minor": 0,
-  "metadata": {
-    "colab": {
-      "provenance": []
-    },
-    "kernelspec": {
-      "name": "python3",
-      "display_name": "Python 3"
-    },
-    "language_info": {
-      "name": "python"
+import pandas as pd
+import numpy as np
+import random
+from sklearn.feature_selection import VarianceThreshold
+
+
+# FUNCIÓN PRINCIPAL
+
+def detectar_columnas_baja_cardinalidad(df, umbral):
+    """
+    Detecta columnas con baja cardinalidad y
+    columnas numéricas con varianza cero.
+
+    Parámetros
+    ----------
+    df : pandas.DataFrame
+        DataFrame de entrada
+
+    umbral : int
+        Número mínimo de valores únicos permitido
+
+    Retorna
+    -------
+    list
+        Lista de nombres de columnas
+    """
+
+
+    # 1. DETECTAR BAJA CARDINALIDAD
+
+    cols_baja_card = [
+        col
+        for col in df.columns
+        if df[col].nunique() < umbral
+    ]
+
+
+    # 2. SELECCIONAR COLUMNAS NUMÉRICAS
+
+
+    df_num = df.select_dtypes(include=[np.number])
+
+    # Lista para columnas con varianza cero
+    cols_var_cero = []
+
+
+    # 3. APLICAR VARIANCETHRESHOLD
+
+    if not df_num.empty:
+
+        selector = VarianceThreshold(
+            threshold=0
+        )
+
+        selector.fit(df_num)
+
+        # True -> columna válida
+        # False -> varianza cero
+        soporte = selector.get_support()
+
+        cols_var_cero = [
+            col
+            for col, keep in zip(df_num.columns, soporte)
+            if not keep
+        ]
+
+
+    # 4. UNIR RESULTADOS
+
+    resultado = list(
+        set(cols_baja_card + cols_var_cero)
+    )
+
+    return resultado
+
+
+# GENERADOR DE CASOS DE USO
+
+def generar_caso_de_uso_detectar_columnas_baja_cardinalidad():
+    """
+    Genera un caso de prueba aleatorio
+    para la función
+    detectar_columnas_baja_cardinalidad
+    """
+
+
+    # PARÁMETROS ALEATORIOS
+
+    n_rows = random.randint(6, 12)
+
+    n_cols = random.randint(3, 5)
+
+
+    # GENERAR DATAFRAME
+
+    data = {}
+
+    for i in range(n_cols):
+
+        col_name = f"col_{i}"
+
+        tipo = random.choice([
+            "baja",
+            "media",
+            "alta"
+        ])
+
+
+        # BAJA CARDINALIDAD
+
+        if tipo == "baja":
+
+            valores = np.random.choice(
+                range(3),
+                size=n_rows
+            )
+
+
+        # MEDIA CARDINALIDAD
+
+        elif tipo == "media":
+
+            valores = np.random.choice(
+                range(10),
+                size=n_rows
+            )
+
+
+        # ALTA CARDINALIDAD
+        else:
+
+            valores = np.random.randint(
+                0,
+                100,
+                size=n_rows
+            )
+
+        data[col_name] = valores
+
+
+    # CREAR DATAFRAME
+    df = pd.DataFrame(data)
+
+
+    # DEFINIR UMBRAL
+    umbral = random.randint(2, 4)
+
+
+    # ASEGURAR UNA COLUMNA DE BAJA CARDINALIDAD
+    if all(
+        df[col].nunique() >= umbral
+        for col in df.columns
+    ):
+
+        col_random = random.choice(df.columns)
+
+        df[col_random] = np.random.choice(
+            [1, 1, 2],
+            size=n_rows
+        )
+
+
+    # INPUT
+    input_data = {
+        "df": df.copy(),
+        "umbral": umbral
     }
-  },
-  "cells": [
-    {
-      "cell_type": "code",
-      "execution_count": 3,
-      "metadata": {
-        "colab": {
-          "base_uri": "https://localhost:8080/"
-        },
-        "id": "KRBdf1l9jUWJ",
-        "outputId": "a0fd5df3-2052-43ae-cce9-d1a9f0e1d21d"
-      },
-      "outputs": [
-        {
-          "output_type": "stream",
-          "name": "stdout",
-          "text": [
-            "=============== INPUT ===============\n",
-            "\n",
-            "   col_0  col_1  col_2  col_3\n",
-            "0      0      4      2      0\n",
-            "1      2      6      1      2\n",
-            "2      0      6      1      0\n",
-            "3      1      2      2      0\n",
-            "4      1      3      1      2\n",
-            "5      1      8      2      0\n",
-            "6      0      5      1      0\n",
-            "7      0      8      1      1\n",
-            "8      0      7      1      0\n",
-            "\n",
-            "Umbral: 3\n",
-            "\n",
-            "=============== OUTPUT ESPERADO ===============\n",
-            "\n",
-            "['col_2']\n",
-            "\n",
-            "=============== RESULTADO FUNCIÓN ===============\n",
-            "\n",
-            "['col_2']\n"
-          ]
-        }
-      ],
-      "source": [
-        "import pandas as pd\n",
-        "import numpy as np\n",
-        "import random\n",
-        "from sklearn.feature_selection import VarianceThreshold\n",
-        "\n",
-        "\n",
-        "# FUNCIÓN PRINCIPAL\n",
-        "\n",
-        "def detectar_columnas_baja_cardinalidad(df, umbral):\n",
-        "    \"\"\"\n",
-        "    Detecta columnas con baja cardinalidad y\n",
-        "    columnas numéricas con varianza cero.\n",
-        "\n",
-        "    Parámetros\n",
-        "    ----------\n",
-        "    df : pandas.DataFrame\n",
-        "        DataFrame de entrada\n",
-        "\n",
-        "    umbral : int\n",
-        "        Número mínimo de valores únicos permitido\n",
-        "\n",
-        "    Retorna\n",
-        "    -------\n",
-        "    list\n",
-        "        Lista de nombres de columnas\n",
-        "    \"\"\"\n",
-        "\n",
-        "\n",
-        "    # 1. DETECTAR BAJA CARDINALIDAD\n",
-        "\n",
-        "    cols_baja_card = [\n",
-        "        col\n",
-        "        for col in df.columns\n",
-        "        if df[col].nunique() < umbral\n",
-        "    ]\n",
-        "\n",
-        "\n",
-        "    # 2. SELECCIONAR COLUMNAS NUMÉRICAS\n",
-        "\n",
-        "\n",
-        "    df_num = df.select_dtypes(include=[np.number])\n",
-        "\n",
-        "    # Lista para columnas con varianza cero\n",
-        "    cols_var_cero = []\n",
-        "\n",
-        "\n",
-        "    # 3. APLICAR VARIANCETHRESHOLD\n",
-        "\n",
-        "    if not df_num.empty:\n",
-        "\n",
-        "        selector = VarianceThreshold(\n",
-        "            threshold=0\n",
-        "        )\n",
-        "\n",
-        "        selector.fit(df_num)\n",
-        "\n",
-        "        # True -> columna válida\n",
-        "        # False -> varianza cero\n",
-        "        soporte = selector.get_support()\n",
-        "\n",
-        "        cols_var_cero = [\n",
-        "            col\n",
-        "            for col, keep in zip(df_num.columns, soporte)\n",
-        "            if not keep\n",
-        "        ]\n",
-        "\n",
-        "\n",
-        "    # 4. UNIR RESULTADOS\n",
-        "\n",
-        "    resultado = list(\n",
-        "        set(cols_baja_card + cols_var_cero)\n",
-        "    )\n",
-        "\n",
-        "    return resultado\n",
-        "\n",
-        "\n",
-        "# GENERADOR DE CASOS DE USO\n",
-        "\n",
-        "def generar_caso_de_uso_detectar_columnas_baja_cardinalidad():\n",
-        "    \"\"\"\n",
-        "    Genera un caso de prueba aleatorio\n",
-        "    para la función\n",
-        "    detectar_columnas_baja_cardinalidad\n",
-        "    \"\"\"\n",
-        "\n",
-        "\n",
-        "    # PARÁMETROS ALEATORIOS\n",
-        "\n",
-        "    n_rows = random.randint(6, 12)\n",
-        "\n",
-        "    n_cols = random.randint(3, 5)\n",
-        "\n",
-        "\n",
-        "    # GENERAR DATAFRAME\n",
-        "\n",
-        "    data = {}\n",
-        "\n",
-        "    for i in range(n_cols):\n",
-        "\n",
-        "        col_name = f\"col_{i}\"\n",
-        "\n",
-        "        tipo = random.choice([\n",
-        "            \"baja\",\n",
-        "            \"media\",\n",
-        "            \"alta\"\n",
-        "        ])\n",
-        "\n",
-        "\n",
-        "        # BAJA CARDINALIDAD\n",
-        "\n",
-        "        if tipo == \"baja\":\n",
-        "\n",
-        "            valores = np.random.choice(\n",
-        "                range(3),\n",
-        "                size=n_rows\n",
-        "            )\n",
-        "\n",
-        "\n",
-        "        # MEDIA CARDINALIDAD\n",
-        "\n",
-        "        elif tipo == \"media\":\n",
-        "\n",
-        "            valores = np.random.choice(\n",
-        "                range(10),\n",
-        "                size=n_rows\n",
-        "            )\n",
-        "\n",
-        "\n",
-        "        # ALTA CARDINALIDAD\n",
-        "        else:\n",
-        "\n",
-        "            valores = np.random.randint(\n",
-        "                0,\n",
-        "                100,\n",
-        "                size=n_rows\n",
-        "            )\n",
-        "\n",
-        "        data[col_name] = valores\n",
-        "\n",
-        "\n",
-        "    # CREAR DATAFRAME\n",
-        "    df = pd.DataFrame(data)\n",
-        "\n",
-        "\n",
-        "    # DEFINIR UMBRAL\n",
-        "    umbral = random.randint(2, 4)\n",
-        "\n",
-        "\n",
-        "    # ASEGURAR UNA COLUMNA DE BAJA CARDINALIDAD\n",
-        "    if all(\n",
-        "        df[col].nunique() >= umbral\n",
-        "        for col in df.columns\n",
-        "    ):\n",
-        "\n",
-        "        col_random = random.choice(df.columns)\n",
-        "\n",
-        "        df[col_random] = np.random.choice(\n",
-        "            [1, 1, 2],\n",
-        "            size=n_rows\n",
-        "        )\n",
-        "\n",
-        "\n",
-        "    # INPUT\n",
-        "    input_data = {\n",
-        "        \"df\": df.copy(),\n",
-        "        \"umbral\": umbral\n",
-        "    }\n",
-        "\n",
-        "\n",
-        "    # OUTPUT ESPERADO\n",
-        "\n",
-        "    # A. Columnas con baja cardinalidad\n",
-        "    cols_baja_card = [\n",
-        "        col\n",
-        "        for col in df.columns\n",
-        "        if df[col].nunique() < umbral\n",
-        "    ]\n",
-        "\n",
-        "    # B. Columnas numéricas\n",
-        "    df_num = df.select_dtypes(include=[np.number])\n",
-        "\n",
-        "    # C. Columnas con varianza cero\n",
-        "    cols_var_cero = []\n",
-        "\n",
-        "    if not df_num.empty:\n",
-        "\n",
-        "        varianzas = df_num.var()\n",
-        "\n",
-        "        cols_var_cero = (\n",
-        "            varianzas[varianzas == 0]\n",
-        "            .index\n",
-        "            .tolist()\n",
-        "        )\n",
-        "\n",
-        "    # D. Unión final\n",
-        "    output_data = list(\n",
-        "        set(cols_baja_card + cols_var_cero)\n",
-        "    )\n",
-        "\n",
-        "    return input_data, output_data\n",
-        "\n",
-        "\n",
-        "\n",
-        "# EJECUCIÓN DE PRUEBA\n",
-        "\n",
-        "if __name__ == \"__main__\":\n",
-        "\n",
-        "    entrada, salida = (\n",
-        "        generar_caso_de_uso_detectar_columnas_baja_cardinalidad()\n",
-        "    )\n",
-        "\n",
-        "\n",
-        "    # MOSTRAR INPUT\n",
-        "\n",
-        "    print(\"=============== INPUT ===============\\n\")\n",
-        "\n",
-        "    print(entrada[\"df\"])\n",
-        "\n",
-        "    print(\"\\nUmbral:\", entrada[\"umbral\"])\n",
-        "\n",
-        "\n",
-        "    # MOSTRAR OUTPUT ESPERADO\n",
-        "\n",
-        "    print(\"\\n=============== OUTPUT ESPERADO ===============\\n\")\n",
-        "\n",
-        "    print(salida)\n",
-        "\n",
-        "\n",
-        "    # PROBAR FUNCIÓN\n",
-        "\n",
-        "    resultado = detectar_columnas_baja_cardinalidad(\n",
-        "        entrada[\"df\"],\n",
-        "        entrada[\"umbral\"]\n",
-        "    )\n",
-        "\n",
-        "    print(\"\\n=============== RESULTADO FUNCIÓN ===============\\n\")\n",
-        "\n",
-        "    print(resultado)"
-      ]
-    }
-  ]
-}
+
+
+    # OUTPUT ESPERADO
+
+    # A. Columnas con baja cardinalidad
+    cols_baja_card = [
+        col
+        for col in df.columns
+        if df[col].nunique() < umbral
+    ]
+
+    # B. Columnas numéricas
+    df_num = df.select_dtypes(include=[np.number])
+
+    # C. Columnas con varianza cero
+    cols_var_cero = []
+
+    if not df_num.empty:
+
+        varianzas = df_num.var()
+
+        cols_var_cero = (
+            varianzas[varianzas == 0]
+            .index
+            .tolist()
+        )
+
+    # D. Unión final
+    output_data = list(
+        set(cols_baja_card + cols_var_cero)
+    )
+
+    return input_data, output_data
+
+
+
+# EJECUCIÓN DE PRUEBA
+
+if __name__ == "__main__":
+
+    entrada, salida = (
+        generar_caso_de_uso_detectar_columnas_baja_cardinalidad()
+    )
+
+
+    # MOSTRAR INPUT
+
+    print("=============== INPUT ===============\n")
+
+    print(entrada["df"])
+
+    print("\nUmbral:", entrada["umbral"])
+
+
+    # MOSTRAR OUTPUT ESPERADO
+
+    print("\n=============== OUTPUT ESPERADO ===============\n")
+
+    print(salida)
+
+
+    # PROBAR FUNCIÓN
+
+    resultado = detectar_columnas_baja_cardinalidad(
+        entrada["df"],
+        entrada["umbral"]
+    )
+
+    print("\n=============== RESULTADO FUNCIÓN ===============\n")
+
+    print(resultado)
