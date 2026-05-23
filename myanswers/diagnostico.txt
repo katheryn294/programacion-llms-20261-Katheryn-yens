@@ -1,0 +1,12 @@
+No se reportan diferencias en la validación.
+
+Todas las soluciones se ejecutaron correctamente en el validador y coincidieron con las respuestas esperadas de los generadores de casos de uso.
+
+Resultados del validador:
+- total answers checked: 4
+- usecase generator errors: 0
+- answers with run errors: 0
+- answers correct: 4
+- answers incorrect: 0
+
+En base a este resultado no fue necesario justificar ningún resultado, ya que todas las respuestas fueron aceptadas correctamente.
